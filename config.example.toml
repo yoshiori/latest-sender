@@ -10,11 +10,24 @@ source_directory = "/var/backups/database"
 file_pattern = "*.sql"
 # Discord webhook URL for notifications
 webhook_url = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+# Time period for file filtering (optional)
+# Only send files updated within this period
+# Examples: "1d" (1 day), "24h" (24 hours), "1w" (1 week), "30m" (30 minutes)
+check_period = "1d"
 
 [[backups]]
 name = "log_archive"
 source_directory = "/var/log/archive"
 file_pattern = "*.tar.gz"
 webhook_url = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+# No check_period specified = no time filtering (send any latest file)
+
+[[backups]]
+name = "hourly_reports"
+source_directory = "/var/reports"
+file_pattern = "report_*.csv"
+webhook_url = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+# For hourly cron jobs, filter files from last hour
+check_period = "1h"
 
 # Add more [[backups]] sections as needed

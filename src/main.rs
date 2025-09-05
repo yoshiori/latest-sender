@@ -47,7 +47,32 @@ fn main() -> Result<()> {
     for backup in &config.backups {
         println!("\nProcessing backup: {}", backup.name);
 
-        match FileFinder::find_latest_file(&backup.source_directory, &backup.file_pattern) {
+        if args.verbose {
+            if let Some(ref period) = backup.check_period {
+                println!("  Check period: {period}");
+            } else {
+                println!("  Check period: none (no time filtering)");
+            }
+        }
+
+        // Parse check period from config
+        let check_period = match backup.parse_check_period() {
+            Ok(period) => period,
+            Err(e) => {
+                eprintln!(
+                    "  Error parsing check_period '{}': {e}",
+                    backup.check_period.as_ref().unwrap_or(&"none".to_string())
+                );
+                total_skipped += 1;
+                continue;
+            }
+        };
+
+        match FileFinder::find_latest_file_with_period(
+            &backup.source_directory,
+            &backup.file_pattern,
+            check_period,
+        ) {
             Ok(Some(file_path)) => {
                 println!("  Found latest file: {file_path:?}");
 
@@ -76,7 +101,14 @@ fn main() -> Result<()> {
                 }
             }
             Ok(None) => {
-                println!("  No files found matching pattern: {}", backup.file_pattern);
+                if backup.check_period.is_some() {
+                    println!(
+                        "  No files found matching pattern '{}' within check period",
+                        backup.file_pattern
+                    );
+                } else {
+                    println!("  No files found matching pattern: {}", backup.file_pattern);
+                }
                 total_skipped += 1;
             }
             Err(e) => {
