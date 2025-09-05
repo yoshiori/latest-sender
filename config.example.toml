@@ -1,0 +1,20 @@
+# Sample configuration file for latest-sender
+# Copy this to config.toml and customize for your needs
+
+[[backups]]
+# Name of this backup configuration
+name = "database_backup"
+# Directory to search for files
+source_directory = "/var/backups/database"
+# Glob pattern to match files (e.g., "*.sql", "backup_*.tar.gz")
+file_pattern = "*.sql"
+# Discord webhook URL for notifications
+webhook_url = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+
+[[backups]]
+name = "log_archive"
+source_directory = "/var/log/archive"
+file_pattern = "*.tar.gz"
+webhook_url = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+
+# Add more [[backups]] sections as needed
