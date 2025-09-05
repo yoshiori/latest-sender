@@ -1,0 +1,40 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    ["@semantic-release/commit-analyzer", {
+      "preset": "conventionalcommits"
+    }],
+    ["@semantic-release/release-notes-generator", {
+      "preset": "conventionalcommits"
+    }],
+    ["@semantic-release/changelog", {
+      "changelogFile": "CHANGELOG.md"
+    }],
+    ["@semantic-release/exec", {
+      "prepareCmd": "sed -i.bak 's/^version = \".*\"/version = \"${nextRelease.version}\"/' Cargo.toml && rm -f Cargo.toml.bak"
+    }],
+    ["@semantic-release/git", {
+      "assets": ["Cargo.toml", "Cargo.lock", "CHANGELOG.md"],
+      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+    }],
+    ["@semantic-release/github", {
+      "assets": [
+        {
+          "path": "target/release/latest-sender",
+          "name": "latest-sender-linux-x86_64",
+          "label": "Linux x86_64 binary"
+        },
+        {
+          "path": "target/x86_64-pc-windows-gnu/release/latest-sender.exe",
+          "name": "latest-sender-windows-x86_64.exe",
+          "label": "Windows x86_64 binary"
+        },
+        {
+          "path": "target/x86_64-apple-darwin/release/latest-sender",
+          "name": "latest-sender-macos-x86_64",
+          "label": "macOS x86_64 binary"
+        }
+      ]
+    }]
+  ]
+}

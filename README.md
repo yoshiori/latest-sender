@@ -91,6 +91,39 @@ Verbose output:
 
 ## Development
 
+### Commit Conventions
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning and changelog generation.
+
+**Commit message format:**
+```
+<type>: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:**
+- `feat:` - A new feature (triggers minor version bump)
+- `fix:` - A bug fix (triggers patch version bump)
+- `docs:` - Documentation only changes
+- `style:` - Changes that do not affect the meaning of the code
+- `refactor:` - Code changes that neither fix a bug nor add a feature
+- `perf:` - Performance improvements
+- `test:` - Adding missing tests or correcting existing tests
+- `chore:` - Changes to the build process or auxiliary tools
+
+**Examples:**
+```bash
+feat: add check_period configuration for time-based filtering
+fix: handle empty directory gracefully in file finder
+docs: update README with new configuration options
+chore: update dependencies to latest versions
+```
+
+**Breaking changes** should include `BREAKING CHANGE:` in the footer to trigger major version bump.
+
 ### Setup Pre-commit Hooks
 
 To ensure code quality, install pre-commit hooks that will automatically run `cargo fmt`, `cargo clippy`, and tests before each commit:
