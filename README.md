@@ -75,6 +75,19 @@ Verbose output:
 
 ## Development
 
+### Setup Pre-commit Hooks
+
+To ensure code quality, install pre-commit hooks that will automatically run `cargo fmt`, `cargo clippy`, and tests before each commit:
+
+```bash
+# Run the setup script
+./setup-hooks.sh
+
+# Or manually install pre-commit and hooks
+pip install pre-commit
+pre-commit install
+```
+
 ### Build
 
 ```bash
