@@ -55,12 +55,18 @@ webhook_url = "https://discord.com/api/webhooks/another"
         assert_eq!(config.backups[0].name, "test_backup");
         assert_eq!(config.backups[0].source_directory, "/path/to/source");
         assert_eq!(config.backups[0].file_pattern, "*.txt");
-        assert_eq!(config.backups[0].webhook_url, "https://discord.com/api/webhooks/test");
-        
+        assert_eq!(
+            config.backups[0].webhook_url,
+            "https://discord.com/api/webhooks/test"
+        );
+
         assert_eq!(config.backups[1].name, "another_backup");
         assert_eq!(config.backups[1].source_directory, "/another/path");
         assert_eq!(config.backups[1].file_pattern, "*.log");
-        assert_eq!(config.backups[1].webhook_url, "https://discord.com/api/webhooks/another");
+        assert_eq!(
+            config.backups[1].webhook_url,
+            "https://discord.com/api/webhooks/another"
+        );
 
         Ok(())
     }

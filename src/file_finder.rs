@@ -9,9 +9,14 @@ pub struct FileFinder;
 impl FileFinder {
     pub fn find_latest_file(directory: &str, pattern: &str) -> Result<Option<PathBuf>> {
         let search_pattern = if Path::new(directory).is_absolute() {
-            format!("{}/{}", directory, pattern)
+            format!("{directory}/{pattern}")
         } else {
-            format!("{}/{}/{}", std::env::current_dir()?.display(), directory, pattern)
+            format!(
+                "{}/{}/{}",
+                std::env::current_dir()?.display(),
+                directory,
+                pattern
+            )
         };
 
         let mut latest_file: Option<(PathBuf, DateTime<Local>)> = None;
@@ -20,11 +25,12 @@ impl FileFinder {
             match entry {
                 Ok(path) => {
                     let metadata = fs::metadata(&path)
-                        .with_context(|| format!("Failed to get metadata for {:?}", path))?;
-                    
+                        .with_context(|| format!("Failed to get metadata for {path:?}"))?;
+
                     if metadata.is_file() {
-                        let modified = metadata.modified()
-                            .with_context(|| format!("Failed to get modified time for {:?}", path))?;
+                        let modified = metadata
+                            .modified()
+                            .with_context(|| format!("Failed to get modified time for {path:?}"))?;
                         let modified_time: DateTime<Local> = modified.into();
 
                         match &latest_file {
@@ -37,7 +43,7 @@ impl FileFinder {
                         }
                     }
                 }
-                Err(e) => eprintln!("Error reading glob entry: {:?}", e),
+                Err(e) => eprintln!("Error reading glob entry: {e:?}"),
             }
         }
 
@@ -77,10 +83,7 @@ mod tests {
 
         let _other_file = File::create(dir_path.join("other.log"))?;
 
-        let result = FileFinder::find_latest_file(
-            dir_path.to_str().unwrap(),
-            "*.txt"
-        )?;
+        let result = FileFinder::find_latest_file(dir_path.to_str().unwrap(), "*.txt")?;
 
         assert!(result.is_some());
         assert_eq!(result.unwrap(), file3_path);
@@ -95,10 +98,7 @@ mod tests {
 
         let _file = File::create(dir_path.join("file.log"))?;
 
-        let result = FileFinder::find_latest_file(
-            dir_path.to_str().unwrap(),
-            "*.txt"
-        )?;
+        let result = FileFinder::find_latest_file(dir_path.to_str().unwrap(), "*.txt")?;
 
         assert!(result.is_none());
 
@@ -110,10 +110,7 @@ mod tests {
         let temp_dir = TempDir::new()?;
         let dir_path = temp_dir.path();
 
-        let result = FileFinder::find_latest_file(
-            dir_path.to_str().unwrap(),
-            "*.txt"
-        )?;
+        let result = FileFinder::find_latest_file(dir_path.to_str().unwrap(), "*.txt")?;
 
         assert!(result.is_none());
 

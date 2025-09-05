@@ -1,10 +1,6 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use latest_sender::{
-    config::Config,
-    discord_sender::DiscordSender,
-    file_finder::FileFinder,
-};
+use latest_sender::{config::Config, discord_sender::DiscordSender, file_finder::FileFinder};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
@@ -23,18 +19,10 @@ struct Args {
     )]
     config: PathBuf,
 
-    #[clap(
-        short,
-        long,
-        help = "Run in dry-run mode (don't actually send files)"
-    )]
+    #[clap(short, long, help = "Run in dry-run mode (don't actually send files)")]
     dry_run: bool,
 
-    #[clap(
-        short,
-        long,
-        help = "Enable verbose output"
-    )]
+    #[clap(short, long, help = "Enable verbose output")]
     verbose: bool,
 }
 
@@ -58,11 +46,11 @@ fn main() -> Result<()> {
 
     for backup in &config.backups {
         println!("\nProcessing backup: {}", backup.name);
-        
+
         match FileFinder::find_latest_file(&backup.source_directory, &backup.file_pattern) {
             Ok(Some(file_path)) => {
-                println!("  Found latest file: {:?}", file_path);
-                
+                println!("  Found latest file: {file_path:?}");
+
                 if args.dry_run {
                     println!("  [DRY RUN] Would send file to webhook");
                     total_skipped += 1;
@@ -79,9 +67,9 @@ fn main() -> Result<()> {
                         }
                         Err(e) => {
                             println!(" ✗ Failed!");
-                            eprintln!("  Error: {}", e);
+                            eprintln!("  Error: {e}");
                             if args.verbose {
-                                eprintln!("  Debug: {:?}", e);
+                                eprintln!("  Debug: {e:?}");
                             }
                         }
                     }
@@ -92,9 +80,9 @@ fn main() -> Result<()> {
                 total_skipped += 1;
             }
             Err(e) => {
-                eprintln!("  Error searching for files: {}", e);
+                eprintln!("  Error searching for files: {e}");
                 if args.verbose {
-                    eprintln!("  Debug: {:?}", e);
+                    eprintln!("  Debug: {e:?}");
                 }
             }
         }
@@ -103,8 +91,8 @@ fn main() -> Result<()> {
     println!("\n{}", "=".repeat(50));
     println!("Summary:");
     println!("  Total backups processed: {}", config.backups.len());
-    println!("  Files sent: {}", total_sent);
-    println!("  Files skipped: {}", total_skipped);
+    println!("  Files sent: {total_sent}");
+    println!("  Files skipped: {total_skipped}");
 
     if args.dry_run {
         println!("\n[DRY RUN MODE] No files were actually sent");
@@ -119,7 +107,8 @@ mod tests {
 
     #[test]
     fn test_args_parsing() {
-        let args = Args::parse_from(&["latest-sender", "-c", "test.toml", "--dry-run", "--verbose"]);
+        let args =
+            Args::parse_from(&["latest-sender", "-c", "test.toml", "--dry-run", "--verbose"]);
         assert_eq!(args.config, PathBuf::from("test.toml"));
         assert!(args.dry_run);
         assert!(args.verbose);
